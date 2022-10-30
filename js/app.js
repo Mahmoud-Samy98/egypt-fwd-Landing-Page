@@ -25,7 +25,7 @@
 
 const sections = Array.from(document.querySelectorAll("section"));
 const menu = document.getElementById("navbar__list");
-const links = Array.from(document.querySelectorAll("li"));
+const liHTML = `<a href="#%url%" data-nav="%dataNav%" class="menu__link %class%">%sectionTitle%</a>`;
 
 /**
  * End Global Variables
@@ -50,7 +50,11 @@ function reset() {
 function createNavItem() {
   for (section of sections) {
     navItem = document.createElement("li");
-    navItem.innerHTML = `<li><a href="#${section.id}" data-nav="${section.id}" class="menu__link ${section.id}">${section.dataset.nav} </a></li>`;
+    navItem.innerHTML = liHTML
+      .replace("%url%", section.id)
+      .replace("%dataNav%", section.id)
+      .replace("%class%", section.id)
+      .replace("%sectionTitle%", section.dataset.nav);
     menu.appendChild(navItem);
   }
 }
@@ -66,34 +70,32 @@ createNavItem();
 
 // scroll event
 window.onscroll = function () {
-  document.querySelectorAll("section").forEach(function (sec) {
+  for (section of sections) {
     // if section in viewPort then toggle class (active) and (your-active-class)
     if (
-      sec.getBoundingClientRect().top >= -400 &&
-      sec.getBoundingClientRect().top <= 150
+      section.getBoundingClientRect().y <= 150 &&
+      section.getBoundingClientRect().y >= -400
     ) {
-      sec.classList.add("your-active-class");
-      document.querySelector(`.${sec.id}`).classList.add("active");
+      document.querySelector(`.${section.id}`).classList.add("active");
+      section.classList.add("your-active-class");
     } else {
-      sec.classList.remove("your-active-class");
-      document.querySelector(`.${sec.id}`).classList.remove("active");
+      document.querySelector(`.${section.id}`).classList.remove("active");
+      section.classList.remove("your-active-class");
     }
-  });
+  }
+  document.querySelectorAll("section").forEach();
 };
 
 // click event
 menu.addEventListener("click", (moveTo) => {
   moveTo.preventDefault();
-  if (moveTo.target.dataset.nav) {
-    // move the viewport to the exact section
-    document
-      .getElementById(`${moveTo.target.dataset.nav}`)
-      .scrollIntoView({ behavior: "smooth" });
-    reset();
-    // add active class to navbar
-    document
-      .querySelector(`.${moveTo.target.dataset.nav}`)
-      .classList.toggle("active");
-    console.log(moveTo.target.dataset.nav);
-  }
+  // move the viewport to the exact section
+  document
+    .getElementById(`${moveTo.target.dataset.nav}`)
+    .scrollIntoView({ behavior: "smooth" });
+  reset();
+  // add active class to navbar
+  document
+    .querySelector(`.${moveTo.target.dataset.nav}`)
+    .classList.toggle("active");
 });
