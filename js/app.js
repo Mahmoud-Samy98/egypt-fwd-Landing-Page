@@ -83,7 +83,6 @@ window.onscroll = function () {
       section.classList.remove("your-active-class");
     }
   }
-  document.querySelectorAll("section").forEach();
 };
 
 // click event
